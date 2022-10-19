@@ -448,7 +448,7 @@ class Ui_MainWindow(object):
         self.TXT_NIBD_Sys.setText(str(syst))
         self.TXT_NIBD_Dia.setText(str(dias))
         # Farbe zu Grün
-        self.BTN_NIBD.setStyleSheet('background-color: green')
+        self.BTN_NIBD.setStyleSheet(f'background-color: {self.farbe_ein}')
         # Thread beenden
         sys.exit(1)
 
@@ -500,13 +500,26 @@ class Ui_MainWindow(object):
     def BTN_ABLT_clicked(self) -> None:
         print("DEBUG: ABLT pushed")
 
+    def ekg_ton_work(self) -> None:
+        # Todo play Sound in Rythmus von ekg Kurve -> bei jedem "Maximum" ein Ton
+        # Todo je höher hf desto höher auch ton
+        print('DEBUG: Sound ON')
+        while True:
+            if not self.puls_ton:
+                print('DEBUG: Sound OFF')
+                sys.exit(1)
+
     def BTN_EKG_TON_clicked(self) -> None:
         print("DEBUG: EKG_TON pushed")
-        if self.puls_ton == True:
+        if self.puls_ton is True:
             self.puls_ton = False
             self.BTN_EKG_TON.setStyleSheet("background-color: white")
         else:
             self.puls_ton = True
+            # starten des workers
+            thread_ekg_ton = Thread(target=self.ekg_ton_work)
+            thread_ekg_ton.start()
+            # Frabe zu Grün
             self.BTN_EKG_TON.setStyleSheet("background-color: green")
 
     def alarm_work(self) -> None:
