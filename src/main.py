@@ -319,7 +319,7 @@ class Ui_MainWindow(object):
         self.TXT_Time.setText(_translate("MainWindow", "00:00"))
         self.BTN_Credits.setText(_translate("MainWindow", "About"))
 
-        self.BTN_Power.setStyleSheet(f'background-color: {self.farbe_aus}')
+        self.BTN_Power.setStyleSheet(f'background-color: {self.farbe_ein}')
         self.BTN_EKG_TON.setStyleSheet(f"background-color: {self.farbe_aus}")
         self.BTN_AED.setStyleSheet(f"background-color: {self.farbe_aus}")
         self.tBTN_Energie_w.setStyleSheet(f"background-color: {self.farbe_aus}")
@@ -349,6 +349,51 @@ class Ui_MainWindow(object):
         self.BTN_Power.clicked.connect(self.BTN_Power_clicked)
         self.BTN_Credits.clicked.connect(self.BTN_Credits_clicked)
 
+    def reset(self) -> None:
+        # Umfärben
+        self.BTN_Power.setStyleSheet(f'background-color: {self.farbe_ein}')
+        self.BTN_EKG_TON.setStyleSheet(f"background-color: {self.farbe_aus}")
+        self.BTN_AED.setStyleSheet(f"background-color: {self.farbe_aus}")
+        self.tBTN_Energie_w.setStyleSheet(f"background-color: {self.farbe_aus}")
+        self.tBTN_Energie_m.setStyleSheet(f"background-color: {self.farbe_aus}")
+        self.BTN_Laden.setStyleSheet(f"background-color: {self.farbe_aus}")
+        self.BTN_Schock.setStyleSheet(f"background-color: {self.farbe_aus}")
+        self.BTN_NIBD.setStyleSheet(f"background-color: {self.farbe_aus}")
+        self.BTN_INT.setStyleSheet(f"background-color: {self.farbe_aus}")
+        self.BTN_12K.setStyleSheet(f"background-color: {self.farbe_aus}")
+        self.BTN_ABLT.setStyleSheet(f"background-color: {self.farbe_aus}")
+        self.BTN_ALARM.setStyleSheet(f"background-color: {self.farbe_aus}")
+        self.BTN_Credits.setStyleSheet(f"background-color: {self.farbe_aus}")
+        # Text zurücksetzten
+        self.TXT_HF.setText("--")
+        self.TXT_NIBD_Sys.setText("---")
+        self.TXT_NIBD_Dia.setText("---")
+        self.TXT_SpO2.setText("--")
+        self.TXT_AF.setText("--")
+        self.TXT_etCO2.setText("--")
+
+    def einschalten(self) -> None:
+        self.BTN_EKG_TON.setStyleSheet(f"background-color: {self.farbe_ein}")
+        self.BTN_AED.setStyleSheet(f"background-color: {self.farbe_ein}")
+        self.tBTN_Energie_w.setStyleSheet(f"background-color: {self.farbe_ein}")
+        self.tBTN_Energie_m.setStyleSheet(f"background-color: {self.farbe_ein}")
+        self.BTN_Laden.setStyleSheet(f"background-color: {self.farbe_ein}")
+        self.BTN_Schock.setStyleSheet(f"background-color: {self.farbe_ein}")
+        self.BTN_NIBD.setStyleSheet(f"background-color: {self.farbe_ein}")
+        self.BTN_INT.setStyleSheet(f"background-color: {self.farbe_ein}")
+        self.BTN_12K.setStyleSheet(f"background-color: {self.farbe_ein}")
+        self.BTN_ABLT.setStyleSheet(f"background-color: {self.farbe_ein}")
+        self.BTN_ALARM.setStyleSheet(f"background-color: {self.farbe_ein}")
+        self.BTN_Credits.setStyleSheet(f"background-color: {self.farbe_ein}")
+        # Umfärben des Power Button
+        self.BTN_Power.setStyleSheet("background-color: green")
+        # Starten der Uhr
+        thread_time = Thread(target=self.show_time)
+        thread_time.start()
+        # Aktuallisieren des Datum
+        current_date = date.today().strftime('%d.%m.%y')
+        self.TXT_Date.setText(current_date)
+
     def show_time(self) -> None:
         while True:
             q_current_time = QTime.currentTime()
@@ -362,52 +407,16 @@ class Ui_MainWindow(object):
         print("DEBUG: POWER pushed")
         if self.power:
             self.power = False
-            # Umfärben des Power Button
-            self.BTN_Power.setStyleSheet(f'background-color: {self.farbe_aus}')
-            self.BTN_EKG_TON.setStyleSheet(f"background-color: {self.farbe_aus}")
-            self.BTN_AED.setStyleSheet(f"background-color: {self.farbe_aus}")
-            self.tBTN_Energie_w.setStyleSheet(f"background-color: {self.farbe_aus}")
-            self.tBTN_Energie_m.setStyleSheet(f"background-color: {self.farbe_aus}")
-            self.BTN_Laden.setStyleSheet(f"background-color: {self.farbe_aus}")
-            self.BTN_Schock.setStyleSheet(f"background-color: {self.farbe_aus}")
-            self.BTN_NIBD.setStyleSheet(f"background-color: {self.farbe_aus}")
-            self.BTN_INT.setStyleSheet(f"background-color: {self.farbe_aus}")
-            self.BTN_12K.setStyleSheet(f"background-color: {self.farbe_aus}")
-            self.BTN_ABLT.setStyleSheet(f"background-color: {self.farbe_aus}")
-            self.BTN_ALARM.setStyleSheet(f"background-color: {self.farbe_aus}")
-            self.BTN_Credits.setStyleSheet(f"background-color: {self.farbe_aus}")
-            self.TXT_HF.setText("--")
-            self.TXT_NIBD_Sys.setText("---")
-            self.TXT_NIBD_Dia.setText("---")
-            self.TXT_SpO2.setText("--")
-            self.TXT_AF.setText("--")
-            self.TXT_etCO2.setText("--")
+            self.reset()
+
         else:
             self.power = True
-            self.BTN_Power.setStyleSheet(f'background-color: {self.farbe_ein}')
-            self.BTN_EKG_TON.setStyleSheet(f"background-color: {self.farbe_ein}")
-            self.BTN_AED.setStyleSheet(f"background-color: {self.farbe_ein}")
-            self.tBTN_Energie_w.setStyleSheet(f"background-color: {self.farbe_ein}")
-            self.tBTN_Energie_m.setStyleSheet(f"background-color: {self.farbe_ein}")
-            self.BTN_Laden.setStyleSheet(f"background-color: {self.farbe_ein}")
-            self.BTN_Schock.setStyleSheet(f"background-color: {self.farbe_ein}")
-            self.BTN_NIBD.setStyleSheet(f"background-color: {self.farbe_ein}")
-            self.BTN_INT.setStyleSheet(f"background-color: {self.farbe_ein}")
-            self.BTN_12K.setStyleSheet(f"background-color: {self.farbe_ein}")
-            self.BTN_ABLT.setStyleSheet(f"background-color: {self.farbe_ein}")
-            self.BTN_ALARM.setStyleSheet(f"background-color: {self.farbe_ein}")
-            self.BTN_Credits.setStyleSheet(f"background-color: {self.farbe_ein}")
-            # Umfärben des Power Button
-            self.BTN_Power.setStyleSheet("background-color: green")
-            # Starten der Uhr
-            thread_time = Thread(target=self.show_time)
-            thread_time.start()
-            # Aktuallisieren des Datum
-            current_date = date.today().strftime('%d.%m.%y')
-            self.TXT_Date.setText(current_date)
+            self.einschalten()
 
     def BTN_AED_clicked(self) -> None:
         print("DEBUG: AED pushed")
+
+
 
     def tBTN_Energie_w_clicked(self) -> None:
         print("DEBUG: ENERGIE_W pushed")
