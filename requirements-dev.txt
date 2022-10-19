@@ -6,3 +6,4 @@ isort
 black
 pre-commit
 autopep8
+PyQt5
