@@ -35,6 +35,7 @@ class Ui_MainWindow(object):
     puls_ton = False
     farbe_ein = "white"
     farbe_aus = "grey"
+    aed_active = False
 
     def setupUi(self, MainWindow: QtWidgets.QMainWindow) -> None:
         MainWindow.setObjectName("MainWindow")
@@ -413,9 +414,34 @@ class Ui_MainWindow(object):
             self.power = True
             self.einschalten()
 
+    def aed_work(self) -> None:
+        while self.aed_active:
+            if bool(get_data_from_key("patches")):
+                print("Analyse, CPR unterbrechen")
+                sleep(5)
+                if bool(get_data_from_key("schockbar")):
+                    print("Schock empfohlen")
+                else:
+                    print("Kein Schock empfohlen")
+                sleep(10)
+            else:
+                print("Elektroden Überprüfen")
+                sleep(10)
+                self.aed_work()
+        sys.exit(1)
+
     def BTN_AED_clicked(self) -> None:
         print("DEBUG: AED pushed")
-
+        if not self.aed_active:
+            self.aed_active = True
+            self.BTN_AED.setStyleSheet('background-color: green')
+            print("Elektroden kleben")  # TODO Audio
+            print("Mit cpr beginnen")
+            thread_aed = Thread(target=self.aed_work)
+            thread_aed.start()
+        else:
+            self.aed_active = False
+            self.BTN_AED.setStyleSheet(f'background-color: {self.farbe_ein}')
 
 
     def tBTN_Energie_w_clicked(self) -> None:
