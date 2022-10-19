@@ -443,7 +443,6 @@ class Ui_MainWindow(object):
             self.aed_active = False
             self.BTN_AED.setStyleSheet(f'background-color: {self.farbe_ein}')
 
-
     def tBTN_Energie_w_clicked(self) -> None:
         print("DEBUG: ENERGIE_W pushed")
         energie = int(self.TXT_Energie.text())
