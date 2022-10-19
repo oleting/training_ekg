@@ -27,9 +27,9 @@ def set_data_by_key(wanted_key: str, value) -> None:
         yaml.dump(content, f)
 
 
-def dummy_ecg_list() -> tuple([ndarray, ndarray]):
+def dummy_ecg_list():
     ekg: ndarray = electrocardiogram()
     time_data = arange(ekg.size) / 360
     #   "time in seconds"
     #   "ECG in milli Volts"
-    return tuple([ekg, time_data])
+    return ekg, time_data
