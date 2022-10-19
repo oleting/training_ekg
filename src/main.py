@@ -376,6 +376,12 @@ class Ui_MainWindow(object):
             self.BTN_ABLT.setStyleSheet(f"background-color: {self.farbe_aus}")
             self.BTN_ALARM.setStyleSheet(f"background-color: {self.farbe_aus}")
             self.BTN_Credits.setStyleSheet(f"background-color: {self.farbe_aus}")
+            self.TXT_HF.setText("--")
+            self.TXT_NIBD_Sys.setText("---")
+            self.TXT_NIBD_Dia.setText("---")
+            self.TXT_SpO2.setText("--")
+            self.TXT_AF.setText("--")
+            self.TXT_etCO2.setText("--")
         else:
             self.power = True
             self.BTN_Power.setStyleSheet(f'background-color: {self.farbe_ein}')
