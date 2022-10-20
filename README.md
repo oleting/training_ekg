@@ -1,6 +1,6 @@
 # Simulierter Patientenmonitor
  Da simulierte Patientenmonitore immer mit enormen Kosten verbunden sind, möchte ich eine kostengünstige Alternative schaffen. Welche 
- macn sich selber zusammen bauen kann.
+ man sich selber zusammen bauen kann.
  Der Monitor wird über eine drahtlose Verbindung mit der Trainer App kommunizieren. Dies soll auch ohne Internetverbindung möglich sein.
  
  # Monitor
