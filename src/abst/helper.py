@@ -9,7 +9,7 @@ def load_yaml():
     yaml_content = yaml.safe_load(yaml_file)
     return yaml_content
 
-# systole; diastole; puls; af; etco2; spo2, energie, ekg
+# systole; diastole; puls; af; etco2; spo2, energie, ekg, patches, schockbar
 
 
 def get_data_from_key(searched_key: str):
