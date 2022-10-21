@@ -1,19 +1,19 @@
 # Simulierter Patientenmonitor
- Da simulierte Patientenmonitore immer mit enormen Kosten verbunden sind, möchte ich eine kostengünstige Alternative schaffen. Welche 
+ Da simulierte Patientenmonitore immer mit enormen Kosten verbunden sind, möchte ich eine kostengünstige Alternative schaffen. Welche
  man sich selber zusammen bauen kann.
  Der Monitor wird über eine drahtlose Verbindung mit der Trainer App kommunizieren. Dies soll auch ohne Internetverbindung möglich sein.
- 
+
  # Monitor
  Der Patientenmonitor soll später auf einem RPI mit Touchscreen laufen und wird im späteren Verlauf auch darauf optimiert.
- 
+
  # Trainer App
  Die Trainer App soll, wie der Name es vermuten lässt, auf grundsätzlich jedem aktuellen Android-Handy laufen.
- 
+
  # Roadmap
 | x.x | Ziel                         | Status              |
 | --- | ---------------------------- | ------------------- |
 | 0.1 | Funktionsfähiges GUI         | :heavy_check_mark:  |
-| 0.2 | Kommunikationsready          | :x:                 |
+| 0.2 | Kommunikationsready          | :heavy_check_mark:  |
 | 0.3 | Einbindung Kurven            | :x:                 |
 | 0.4 | 1. praktische Umsetztung     | :x:                 |
 | 0.5 | 2. praktische Umsetzung      | :x:                 |
