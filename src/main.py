@@ -421,7 +421,7 @@ class Ui_MainWindow(object):
                 sleep(5)
                 if bool(get_data_from_key("schockbar")):
                     print("Schock empfohlen")
-                    #Todo Handle erfolgreicher Schock
+                    # Todo Handle erfolgreicher Schock
                 else:
                     print("Kein Schock empfohlen")
                 sleep(10)
