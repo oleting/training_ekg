@@ -24,12 +24,14 @@ from PyQt5.QtCore import QRect
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QThread
+from PyQt5.QtCore import QThreadPool
 from PyQt5.QtCore import QTime
 from PyQt5.QtCore import QTimer
 
 from abst.helper import MplCanvas
-from abst.helper import set_data_by_key, get_data_from_key
-from abst.workers import Worker_NIBD
+from abst.helper import get_data_from_key
+from abst.helper import set_data_by_key
+from abst.workers import Worker
 
 
 class Ui_MainWindow(object):
@@ -45,6 +47,8 @@ class Ui_MainWindow(object):
     _plot_ref = None
     xdata = list(range(n_data))
     ydata = [random.randint(0, 10) for i in range(n_data)]
+
+    threadpool = QThreadPool()
 
     def setupUi(self, MainWindow: QtWidgets.QMainWindow) -> None:
         MainWindow.setObjectName("MainWindow")
@@ -333,7 +337,6 @@ class Ui_MainWindow(object):
         self.canvas_1.axes.yaxis.set_visible(False)
         self.canvas_1.axes.xaxis.set_visible(False)
 
-
         self.BTN_Power.setStyleSheet(f'background-color: {self.farbe_ein}')
         self.BTN_EKG_TON.setStyleSheet(f"background-color: {self.farbe_aus}")
         self.BTN_AED.setStyleSheet(f"background-color: {self.farbe_aus}")
@@ -451,8 +454,7 @@ class Ui_MainWindow(object):
             self.BTN_AED.setStyleSheet('background-color: green')
             print("Elektroden kleben")  # TODO Audio
             print("Mit cpr beginnen")
-            thread_aed = Thread(target=self.aed_work)
-            thread_aed.start()
+            self.threadpool.start(Worker(fn=self.aed_work))
         else:
             self.aed_active = False
             self.BTN_AED.setStyleSheet(f'background-color: {self.farbe_ein}')
@@ -488,26 +490,40 @@ class Ui_MainWindow(object):
     def BTN_NIBD_clicked(self) -> None:
         print("DEBUG: NIBD pushed")
         self.BTN_NIBD.setEnabled(False)
-        self.thread_nibd = QThread()
-        self.worker_nibd = Worker_NIBD(parent=self)
-        self.worker_nibd.moveToThread(self.thread_nibd)
-        self.thread_nibd.started.connect(self.worker_nibd.run)
-        self.worker_nibd.finished.connect(self.thread_nibd.quit)
-        self.worker_nibd.finished.connect(self.worker_nibd.deleteLater)
-        self.thread_nibd.finished.connect(self.thread_nibd.deleteLater)
-        self.thread_nibd.start()
+        self.threadpool.start(Worker(fn=self.get_data_nibd))
 
-        self.thread_nibd.finished.connect(
-            lambda: self.BTN_NIBD.setEnabled(True)
-        )
+    def get_data_nibd(self) -> None:
+        # Farbe zu gelb
+        self.BTN_NIBD.setEnabled(False)
+        self.BTN_NIBD.setStyleSheet('background-color: yellow')
+        # Sound abspielen und warten
+        self.nibd_sound_and_wait()
+        # get Data
+        syst = get_data_from_key("systole")
+        dias = get_data_from_key("diastole")
+        # set Text
+        self.TXT_NIBD_Sys.setText(str(syst))
+        self.TXT_NIBD_Dia.setText(str(dias))
+        self.TXT_NIBD_Sys.setStyleSheet(f'background-color: {"lightblue"}')
+        self.TXT_NIBD_Dia.setStyleSheet(f'background-color: {"lightblue"}')
+        sleep(0.4)
+        self.TXT_NIBD_Sys.setStyleSheet(f'background-color: {"transparent"}')
+        self.TXT_NIBD_Dia.setStyleSheet(f'background-color: {"transparent"}')
+
+        # Farbe zu Grün
+        self.BTN_NIBD.setStyleSheet(f'background-color: {self.farbe_ein}')
+        self.BTN_NIBD.setEnabled(True)
+
+    def nibd_sound_and_wait(self) -> None:
+        # Todo play Sound
+        # Todo anpassen des warte intervalls
+        sleep(5)
 
     def BTN_INT_clicked(self) -> None:
         print("DEBUG: INT pushed")
         # set intervall
         if self.inter == 0:
-            thread_int = Thread(target=self.helerp_int)
-            thread_int.start()
-
+            self.threadpool.start(Worker(fn=self.helerp_int))
         if self.inter == 0:
             self.inter = 2
             self.BTN_INT.setText(str(self.inter) + " min")
@@ -528,14 +544,13 @@ class Ui_MainWindow(object):
         sleep(10)
         while True:
             temp_inter = self.inter
-            sleep(temp_inter * 60)
+            sleep(temp_inter * 2)
             if self.inter == 0:
                 break
             elif self.inter == temp_inter:
                 self.BTN_NIBD_clicked()
             else:
                 sleep(self.inter - temp_inter)
-                print("Hie")
         sys.exit(1)
 
     def BTN_12K_clicked(self) -> None:
@@ -573,8 +588,8 @@ class Ui_MainWindow(object):
         # set global to alarms off
         self.alarm_off = True
         # counter
-        for i in range(2 * 60):
-            self.BTN_ALARM.setText(str((2 * 60) - i - 1))
+        for i in range(2 * 20):
+            self.BTN_ALARM.setText(str((2 * 20) - i - 1))
             sleep(1)
 
         # Reset Button
@@ -589,8 +604,7 @@ class Ui_MainWindow(object):
 
     def BTN_ALARM_clicked(self) -> None:
         print("DEBUG: ALARM pushed")
-        thread_alarm = Thread(target=self.alarm_work)
-        thread_alarm.start()
+        self.threadpool.start(Worker(fn=self.alarm_work))
 
     def BTN_Credits_clicked(self) -> None:
         print("DEBUG: Credits pushed")
@@ -598,7 +612,6 @@ class Ui_MainWindow(object):
         self.timer.setInterval(50)
         self.timer.timeout.connect(self.update_canvas_1)
         self.timer.start()
-
 
     # ! Kurven
     # EKG Ableitungen

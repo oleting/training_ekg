@@ -1,10 +1,10 @@
 af: 14
 diastole: 80
 ekg: a1
-energie: 200
+energie: 250
 etco2: 35
+patches: true
 puls: 80
+schockbar: false
 spo2: 98
 systole: 120
-patches: True
-schockbar: False
