@@ -614,9 +614,6 @@ class Ui_MainWindow(object):
         self.ydata = self.ydata[1:] + [random.randint(0, 10)]
 
         if self._plot_ref is None:
-            # First time we have no plot reference, so do a normal plot.
-            # .plot returns a list of line <reference>s, as we're
-            # only getting one we can take the first element.
             plot_refs = self.canvas_1.axes.plot(self.xdata, self.ydata, 'r')
             self._plot_ref = plot_refs[0]
         else:
