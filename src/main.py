@@ -486,6 +486,7 @@ class Ui_MainWindow(object):
 
     def BTN_Schock_clicked(self) -> None:
         print("DEBUG: SCHOCK pushed")
+        self.BTN_Schock.setEnabled(False)
 
     def BTN_NIBD_clicked(self) -> None:
         print("DEBUG: NIBD pushed")
