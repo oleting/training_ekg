@@ -45,8 +45,13 @@ class Ui_MainWindow(object):
 
     n_data = 60
     _plot_ref = None
+    _plot_ref_2 = None
+    _plot_ref_3 = None
     xdata = list(range(n_data))
-    ydata = [random.randint(0, 10) for i in range(n_data)]
+    ydata_1 = [random.randint(0, 10) for i in range(n_data)]
+    ydata_2 = [random.randint(0, 10) for i in range(n_data)]
+    ydata_3 = [random.randint(0, 10) for i in range(n_data)]
+
 
     threadpool = QThreadPool()
 
@@ -285,16 +290,13 @@ class Ui_MainWindow(object):
         self.canvas_1.setObjectName("canvas_1")
         self.verticalLayout_m.addWidget(self.canvas_1)
 
-        self.frame_3 = QtWidgets.QFrame(self.verticalLayoutWidget_5)
-        self.frame_3.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_3.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_3.setObjectName("frame_3")
-        self.verticalLayout_m.addWidget(self.frame_3)
-        self.frame_2 = QtWidgets.QFrame(self.verticalLayoutWidget_5)
-        self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_2.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_2.setObjectName("frame_2")
-        self.verticalLayout_m.addWidget(self.frame_2)
+        self.canvas_2 = MplCanvas(self, width=1, height=1.5, dpi=100)
+        self.canvas_2.setObjectName("canvas_2")
+        self.verticalLayout_m.addWidget(self.canvas_2)
+
+        self.canvas_3 = MplCanvas(self, width=1, height=1.5, dpi=100)
+        self.canvas_3.setObjectName("canvas_3")
+        self.verticalLayout_m.addWidget(self.canvas_3)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -336,6 +338,10 @@ class Ui_MainWindow(object):
 
         self.canvas_1.axes.yaxis.set_visible(False)
         self.canvas_1.axes.xaxis.set_visible(False)
+        self.canvas_2.axes.yaxis.set_visible(False)
+        self.canvas_2.axes.xaxis.set_visible(False)
+        self.canvas_3.axes.yaxis.set_visible(False)
+        self.canvas_3.axes.xaxis.set_visible(False)
 
         self.BTN_Power.setStyleSheet(f'background-color: {self.farbe_ein}')
         self.BTN_EKG_TON.setStyleSheet(f"background-color: {self.farbe_aus}")
@@ -612,6 +618,8 @@ class Ui_MainWindow(object):
         self.timer = QTimer()
         self.timer.setInterval(50)
         self.timer.timeout.connect(self.update_canvas_1)
+        self.timer.timeout.connect(self.update_canvas_2)
+        self.timer.timeout.connect(self.update_canvas_3)
         self.timer.start()
 
     # ! Kurven
@@ -619,18 +627,48 @@ class Ui_MainWindow(object):
 
     def update_canvas_1(self) -> None:
         # Drop of des ersten y element + neuer Wert am Ende
-        self.ydata = self.ydata[1:] + [random.randint(0, 10)]
+        self.ydata_1 = self.ydata_1[1:] + [random.randint(0, 10)]
 
         if self._plot_ref is None:
-            plot_refs = self.canvas_1.axes.plot(self.xdata, self.ydata, 'g')
+            plot_refs = self.canvas_1.axes.plot(self.xdata, self.ydata_1, 'g')
 
             self._plot_ref = plot_refs[0]
         else:
             # Update data
-            self._plot_ref.set_ydata(self.ydata)
+            self._plot_ref.set_ydata(self.ydata_1)
 
         # Update und zeichnen
         self.canvas_1.draw()
+
+    def update_canvas_2(self) -> None:
+        # Drop of des ersten y element + neuer Wert am Ende
+        self.ydata_2 = self.ydata_2[1:] + [random.randint(0, 10)]
+
+        if self._plot_ref_2 is None:
+            plot_refs = self.canvas_2.axes.plot(self.xdata, self.ydata_2, 'g')
+
+            self._plot_ref_2 = plot_refs[0]
+        else:
+            # Update data
+            self._plot_ref_2.set_ydata(self.ydata_2)
+
+        # Update und zeichnen
+        self.canvas_2.draw()
+
+    def update_canvas_3(self) -> None:
+        # Drop of des ersten y element + neuer Wert am Ende
+        self.ydata_3 = self.ydata_3[1:] + [random.randint(0, 10)]
+
+        if self._plot_ref_3 is None:
+            plot_refs = self.canvas_3.axes.plot(self.xdata, self.ydata_3, 'g')
+
+            self._plot_ref_3 = plot_refs[0]
+        else:
+            # Update data
+            self._plot_ref_3.set_ydata(self.ydata_3)
+
+        # Update und zeichnen
+        self.canvas_3.draw()
 
 
 if __name__ == "__main__":

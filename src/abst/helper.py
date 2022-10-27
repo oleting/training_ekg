@@ -3,7 +3,6 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from numpy import arange
 from numpy import ndarray
-from scipy.misc import electrocardiogram
 
 import yaml
 
@@ -36,11 +35,3 @@ def set_data_by_key(wanted_key: str, value) -> None:
     content[wanted_key] = value
     with open("./data/data_from_teacher.yaml", "w") as f:
         yaml.dump(content, f)
-
-
-def dummy_ecg_list():
-    ekg: ndarray = electrocardiogram()
-    time_data = arange(ekg.size) / 360
-    #   "time in seconds"
-    #   "ECG in milli Volts"
-    return ekg, time_data
