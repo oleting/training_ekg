@@ -400,18 +400,19 @@ class Ui_MainWindow(object):
         # Starten der Uhr
         thread_time = Thread(target=self.show_time)
         thread_time.start()
+        self.timer_time = QTimer()
+        self.timer_time.timeout.connect(self.show_time)
+        self.timer_time.start(1000)
         # Aktuallisieren des Datum
         current_date = date.today().strftime('%d.%m.%y')
         self.TXT_Date.setText(current_date)
 
     def show_time(self) -> None:
-        while True:
-            q_current_time = QTime.currentTime()
-            current_time = q_current_time.toString('hh:mm:ss')
-            self.TXT_Time.setText(current_time)
-            if not self.power:
-                self.TXT_Time.setText('00:00:00')
-                sys.exit(1)
+        q_current_time = QTime.currentTime()
+        current_time = q_current_time.toString('hh:mm:ss')
+        self.TXT_Time.setText(current_time)
+        if not self.power:
+            self.TXT_Time.setText('00:00:00')
 
     def BTN_Power_clicked(self) -> None:
         print("DEBUG: POWER pushed")
@@ -617,7 +618,7 @@ class Ui_MainWindow(object):
             plot_refs = self.canvas_1.axes.plot(self.xdata, self.ydata, 'r')
             self._plot_ref = plot_refs[0]
         else:
-            # ? We have a reference, we can use it to update the data for that line.
+            # Update data
             self._plot_ref.set_ydata(self.ydata)
 
         # Update und zeichnen
