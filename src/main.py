@@ -9,6 +9,7 @@
 
 
 import os
+import random
 import sys
 from datetime import date
 from threading import Thread
@@ -23,7 +24,9 @@ from PyQt5.QtCore import QRect
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QTime
+from PyQt5.QtCore import QTimer
 
+from abst.helper import MplCanvas
 from abst.helper import get_data_from_key
 from abst.helper import set_data_by_key
 
@@ -36,6 +39,11 @@ class Ui_MainWindow(object):
     farbe_ein = "white"
     farbe_aus = "grey"
     aed_active = False
+
+    n_data = 50
+    _plot_ref = None
+    xdata = list(range(n_data))
+    ydata = [random.randint(0, 10) for i in range(n_data)]
 
     def setupUi(self, MainWindow: QtWidgets.QMainWindow) -> None:
         MainWindow.setObjectName("MainWindow")
@@ -267,11 +275,11 @@ class Ui_MainWindow(object):
             self.verticalLayoutWidget_5)
         self.verticalLayout_m.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_m.setObjectName("verticalLayout_m")
-        self.frame = QtWidgets.QFrame(self.verticalLayoutWidget_5)
-        self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame.setObjectName("frame")
-        self.verticalLayout_m.addWidget(self.frame)
+
+        self.canvas_1 = MplCanvas(self, width=1, height=1.5, dpi=100)
+        self.canvas_1.setObjectName("canvas_1")
+        self.verticalLayout_m.addWidget(self.canvas_1)
+
         self.frame_3 = QtWidgets.QFrame(self.verticalLayoutWidget_5)
         self.frame_3.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_3.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -282,6 +290,7 @@ class Ui_MainWindow(object):
         self.frame_2.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_2.setObjectName("frame_2")
         self.verticalLayout_m.addWidget(self.frame_2)
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -591,6 +600,31 @@ class Ui_MainWindow(object):
 
     def BTN_Credits_clicked(self) -> None:
         print("DEBUG: Credits pushed")
+        self.timer = QTimer()
+        self.timer.setInterval(50)
+        self.timer.timeout.connect(self.update_canvas_1)
+        self.timer.start()
+
+
+    # ! Kurven
+    # EKG Ableitungen
+
+    def update_canvas_1(self) -> None:
+        # Drop of des ersten y element + neuer Wert am Ende
+        self.ydata = self.ydata[1:] + [random.randint(0, 10)]
+
+        if self._plot_ref is None:
+            # First time we have no plot reference, so do a normal plot.
+            # .plot returns a list of line <reference>s, as we're
+            # only getting one we can take the first element.
+            plot_refs = self.canvas_1.axes.plot(self.xdata, self.ydata, 'r')
+            self._plot_ref = plot_refs[0]
+        else:
+            # ? We have a reference, we can use it to update the data for that line.
+            self._plot_ref.set_ydata(self.ydata)
+
+        # Update und zeichnen
+        self.canvas_1.draw()
 
 
 if __name__ == "__main__":
@@ -599,5 +633,4 @@ if __name__ == "__main__":
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
-    # sys.exit()
     os._exit(app.exec_())
