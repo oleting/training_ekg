@@ -23,12 +23,13 @@ from PyQt5.QtCore import QMetaObject
 from PyQt5.QtCore import QRect
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QThread
 from PyQt5.QtCore import QTime
 from PyQt5.QtCore import QTimer
 
 from abst.helper import MplCanvas
-from abst.helper import get_data_from_key
-from abst.helper import set_data_by_key
+from abst.helper import set_data_by_key, get_data_from_key
+from abst.workers import Worker_NIBD
 
 
 class Ui_MainWindow(object):
@@ -40,7 +41,7 @@ class Ui_MainWindow(object):
     farbe_aus = "grey"
     aed_active = False
 
-    n_data = 50
+    n_data = 60
     _plot_ref = None
     xdata = list(range(n_data))
     ydata = [random.randint(0, 10) for i in range(n_data)]
@@ -329,6 +330,10 @@ class Ui_MainWindow(object):
         self.TXT_Time.setText(_translate("MainWindow", "00:00"))
         self.BTN_Credits.setText(_translate("MainWindow", "About"))
 
+        self.canvas_1.axes.yaxis.set_visible(False)
+        self.canvas_1.axes.xaxis.set_visible(False)
+
+
         self.BTN_Power.setStyleSheet(f'background-color: {self.farbe_ein}')
         self.BTN_EKG_TON.setStyleSheet(f"background-color: {self.farbe_aus}")
         self.BTN_AED.setStyleSheet(f"background-color: {self.farbe_aus}")
@@ -398,8 +403,6 @@ class Ui_MainWindow(object):
         # Umfärben des Power Button
         self.BTN_Power.setStyleSheet("background-color: green")
         # Starten der Uhr
-        thread_time = Thread(target=self.show_time)
-        thread_time.start()
         self.timer_time = QTimer()
         self.timer_time.timeout.connect(self.show_time)
         self.timer_time.start(1000)
@@ -484,29 +487,19 @@ class Ui_MainWindow(object):
 
     def BTN_NIBD_clicked(self) -> None:
         print("DEBUG: NIBD pushed")
-        thread_nibd = Thread(target=self.get_data_nibd)
-        thread_nibd.start()
+        self.BTN_NIBD.setEnabled(False)
+        self.thread_nibd = QThread()
+        self.worker = Worker_NIBD(parent=self)
+        self.worker.moveToThread(self.thread_nibd)
+        self.thread_nibd.started.connect(self.worker.run)
+        self.worker.finished.connect(self.thread_nibd.quit)
+        self.worker.finished.connect(self.worker.deleteLater)
+        self.thread_nibd.finished.connect(self.thread_nibd.deleteLater)
+        self.thread_nibd.start()
 
-    def get_data_nibd(self) -> None:
-        # Farbe zu gelb
-        self.BTN_NIBD.setStyleSheet('background-color: yellow')
-        # Sound abspielen und warten
-        self.nibd_sound_and_wait()
-        # get Data
-        syst = get_data_from_key("systole")
-        dias = get_data_from_key("diastole")
-        # set Text
-        self.TXT_NIBD_Sys.setText(str(syst))
-        self.TXT_NIBD_Dia.setText(str(dias))
-        # Farbe zu Grün
-        self.BTN_NIBD.setStyleSheet(f'background-color: {self.farbe_ein}')
-        # Thread beenden
-        sys.exit(1)
-
-    def nibd_sound_and_wait(self) -> None:
-        # Todo play Sound
-        # Todo anpassen des warte intervalls
-        sleep(5)
+        self.thread_nibd.finished.connect(
+            lambda: self.BTN_NIBD.setEnabled(True)
+        )
 
     def BTN_INT_clicked(self) -> None:
         print("DEBUG: INT pushed")
@@ -615,7 +608,8 @@ class Ui_MainWindow(object):
         self.ydata = self.ydata[1:] + [random.randint(0, 10)]
 
         if self._plot_ref is None:
-            plot_refs = self.canvas_1.axes.plot(self.xdata, self.ydata, 'r')
+            plot_refs = self.canvas_1.axes.plot(self.xdata, self.ydata, 'g')
+
             self._plot_ref = plot_refs[0]
         else:
             # Update data

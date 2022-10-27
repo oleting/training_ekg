@@ -1,8 +1,9 @@
-from numpy import ndarray, arange
-from scipy.misc import electrocardiogram
 
-from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
+from numpy import arange
+from numpy import ndarray
+from scipy.misc import electrocardiogram
 
 import yaml
 
