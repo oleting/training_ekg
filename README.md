@@ -20,3 +20,13 @@
 | 0.6 | Einbindung AED Algorhytmus   | :x:                 |
 | 0.7 | Einbindung Sounds            | :x:                 |
 | 0.8 | 3. praktische Umsetztung     | :x:                 |
+
+# How to run
+## Requirements
+Python 3.7
+
+## Run
+```
+pip install -r requirements-dev.txt
+python src/main.py
+```
