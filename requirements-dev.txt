@@ -7,4 +7,5 @@ black
 pre-commit
 autopep8
 PyQt5
-yaml
+PyYAML
+matplotlib
