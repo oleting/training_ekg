@@ -9,3 +9,4 @@ autopep8
 PyQt5
 PyYAML
 matplotlib
+heartpy
