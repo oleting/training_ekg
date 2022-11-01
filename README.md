@@ -22,11 +22,11 @@
 | 0.8 | 3. praktische Umsetztung     | :x:                 |
 
 ## ToDo der aktuellen Version
-- [] Beschaffung weiterer EKG Kurven
-- [] Organisation der Kurven Datenbank
+- [ ] Beschaffung weiterer EKG Kurven
+- [ ] Organisation der Kurven Datenbank
 - [X] HF messen und darstellen
-- [] Kurven automatisch in richtiger Geschwindigkeit darstellen
-- [] HF Sound
+- [ ] Kurven automatisch in richtiger Geschwindigkeit darstellen
+- [ ] HF Sound
 
 # How to run
 ## Requirements
