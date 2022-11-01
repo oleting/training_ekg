@@ -16,6 +16,7 @@ from threading import Thread
 from threading import current_thread
 from time import sleep
 
+import numpy as np
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QCoreApplication
@@ -32,9 +33,8 @@ from abst.helper import MplCanvas
 from abst.helper import get_data_from_key
 from abst.helper import set_data_by_key
 from abst.workers import Worker
-
+from pysinewave import SineWave
 import heartpy as hp
-import numpy as np
 
 
 class Ui_MainWindow(object):
@@ -575,9 +575,14 @@ class Ui_MainWindow(object):
         print('DEBUG: Sound ON')
         while self.puls_ton:
             try:
-                t = int(self.TXT_HF.text())
-                sleep(60 / t)
-                print("BEEP")
+                f = int(self.TXT_HF.text())
+                f = 40
+                sleep((60 / f) - 0.05)
+                sinewave = SineWave(pitch=(f / 10) - 5)
+                sinewave.play()
+                sleep(0.05)
+                sinewave.stop()
+                # sine_tone(frequency=(f + 440.00), duration=0.5)
             except Exception as e:
                 sleep(5)
                 print("Kein Puls gefunden" + str(e))
