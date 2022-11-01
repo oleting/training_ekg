@@ -1,11 +1,13 @@
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
+from matplotlib import use
 from numpy import arange
 from numpy import ndarray
 
 import yaml
 
+use('Qt5Agg')
 
 class MplCanvas(FigureCanvas):
     def __init__(self, parent=None, width=5, height=4, dpi=100) -> None:

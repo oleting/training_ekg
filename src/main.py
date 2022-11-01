@@ -33,6 +33,9 @@ from abst.helper import get_data_from_key
 from abst.helper import set_data_by_key
 from abst.workers import Worker
 
+import heartpy as hp
+import numpy as np
+
 
 class Ui_MainWindow(object):
     inter = 0
@@ -43,15 +46,15 @@ class Ui_MainWindow(object):
     farbe_aus = "grey"
     aed_active = False
 
-    n_data = 60
+    n_data = 500
     _plot_ref = None
     _plot_ref_2 = None
     _plot_ref_3 = None
     xdata = list(range(n_data))
-    ydata_1 = [random.randint(0, 10) for i in range(n_data)]
-    ydata_2 = [random.randint(0, 10) for i in range(n_data)]
-    ydata_3 = [random.randint(0, 10) for i in range(n_data)]
-
+    data, _ = hp.load_exampledata(0)
+    ydata_3 = data[:n_data:]
+    ydata_2 = data[:n_data:]
+    ydata_1 = data[:n_data:]
 
     threadpool = QThreadPool()
 
@@ -374,6 +377,7 @@ class Ui_MainWindow(object):
         self.BTN_Credits.clicked.connect(self.BTN_Credits_clicked)
 
     def reset(self) -> None:
+        self.timer.stop()
         # Umfärben
         self.BTN_Power.setStyleSheet(f'background-color: {self.farbe_ein}')
         self.BTN_EKG_TON.setStyleSheet(f"background-color: {self.farbe_aus}")
@@ -567,12 +571,16 @@ class Ui_MainWindow(object):
         print("DEBUG: ABLT pushed")
 
     def ekg_ton_work(self) -> None:
-        # Todo play Sound in Rythmus von ekg Kurve -> bei jedem "Maximum" ein Ton
-        # Todo je höher hf desto höher auch ton
+        # Todo je höher hf desto höher auch ton + Sound
         print('DEBUG: Sound ON')
         while self.puls_ton:
-            sleep(1)
-            print("BEEP")
+            try:
+                t = int(self.TXT_HF.text())
+                sleep(60 / t)
+                print("BEEP")
+            except Exception as e:
+                sleep(5)
+                print("Kein Puls gefunden" + str(e))
         print('DEBUG: Sound OFF')
         sys.exit(1)
 
@@ -580,7 +588,7 @@ class Ui_MainWindow(object):
         print("DEBUG: EKG_TON pushed")
         if self.puls_ton is True:
             self.puls_ton = False
-            self.BTN_EKG_TON.setStyleSheet("background-color: white")
+            self.BTN_EKG_TON.setStyleSheet(f"background-color: {self.farbe_ein}")
         else:
             self.puls_ton = True
             # starten des workers
@@ -616,7 +624,7 @@ class Ui_MainWindow(object):
     def BTN_Credits_clicked(self) -> None:
         print("DEBUG: Credits pushed")
         self.timer = QTimer()
-        self.timer.setInterval(50)
+        self.timer.setInterval(10)
         self.timer.timeout.connect(self.update_canvas_1)
         self.timer.timeout.connect(self.update_canvas_2)
         self.timer.timeout.connect(self.update_canvas_3)
@@ -627,45 +635,46 @@ class Ui_MainWindow(object):
 
     def update_canvas_1(self) -> None:
         # Drop of des ersten y element + neuer Wert am Ende
-        self.ydata_1 = self.ydata_1[1:] + [random.randint(0, 10)]
+        self.ydata_1 = np.roll(self.ydata_1, -1)
 
         if self._plot_ref is None:
-            plot_refs = self.canvas_1.axes.plot(self.xdata, self.ydata_1, 'g')
+            plot_refs = self.canvas_1.axes.plot(self.xdata, self.ydata_1[:self.n_data:], 'g')
 
             self._plot_ref = plot_refs[0]
         else:
             # Update data
-            self._plot_ref.set_ydata(self.ydata_1)
+            self._plot_ref.set_ydata(self.ydata_1[:self.n_data:])
+            working_data, measures = hp.process(self.data[:self.n_data:], 100.0)
 
+            self.TXT_HF.setText(str(int(measures['bpm'])))
         # Update und zeichnen
         self.canvas_1.draw()
 
     def update_canvas_2(self) -> None:
         # Drop of des ersten y element + neuer Wert am Ende
-        self.ydata_2 = self.ydata_2[1:] + [random.randint(0, 10)]
+        self.ydata_2 = np.roll(self.ydata_2, -1)
 
         if self._plot_ref_2 is None:
-            plot_refs = self.canvas_2.axes.plot(self.xdata, self.ydata_2, 'g')
+            plot_refs = self.canvas_2.axes.plot(self.xdata, self.ydata_2[:self.n_data:], 'g')
 
             self._plot_ref_2 = plot_refs[0]
         else:
             # Update data
-            self._plot_ref_2.set_ydata(self.ydata_2)
+            self._plot_ref_2.set_ydata(self.ydata_2[:self.n_data:])
 
         # Update und zeichnen
         self.canvas_2.draw()
 
     def update_canvas_3(self) -> None:
-        # Drop of des ersten y element + neuer Wert am Ende
-        self.ydata_3 = self.ydata_3[1:] + [random.randint(0, 10)]
-
+        # verschieben des Array
+        self.ydata_3 = np.roll(self.ydata_3, -1)
         if self._plot_ref_3 is None:
-            plot_refs = self.canvas_3.axes.plot(self.xdata, self.ydata_3, 'g')
+            plot_refs = self.canvas_3.axes.plot(self.xdata, self.ydata_3[:self.n_data:], 'g')
 
             self._plot_ref_3 = plot_refs[0]
         else:
             # Update data
-            self._plot_ref_3.set_ydata(self.ydata_3)
+            self._plot_ref_3.set_ydata(self.ydata_3[:self.n_data:])
 
         # Update und zeichnen
         self.canvas_3.draw()
