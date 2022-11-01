@@ -21,6 +21,13 @@
 | 0.7 | Einbindung Sounds            | :x:                 |
 | 0.8 | 3. praktische Umsetztung     | :x:                 |
 
+## ToDo der aktuellen Version
+- [] Beschaffung weiterer EKG Kurven
+- [] Organisation der Kurven Datenbank
+- [X] HF messen und darstellen
+- [] Kurven automatisch in richtiger Geschwindigkeit darstellen
+- [] HF Sound
+
 # How to run
 ## Requirements
 Python >=3.7
@@ -30,3 +37,6 @@ Python >=3.7
 pip install -r requirements-dev.txt
 python src/main.py
 ```
+# Genutzte Bibliotheken
+## Python Heart Rate Analysis Toolkit
+https://github.com/paulvangentcom/heartrate_analysis_python
