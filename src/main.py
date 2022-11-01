@@ -570,10 +570,11 @@ class Ui_MainWindow(object):
         # Todo play Sound in Rythmus von ekg Kurve -> bei jedem "Maximum" ein Ton
         # Todo je höher hf desto höher auch ton
         print('DEBUG: Sound ON')
-        while True:
-            if not self.puls_ton:
-                print('DEBUG: Sound OFF')
-                sys.exit(1)
+        while self.puls_ton:
+            sleep(1)
+            print("BEEP")
+        print('DEBUG: Sound OFF')
+        sys.exit(1)
 
     def BTN_EKG_TON_clicked(self) -> None:
         print("DEBUG: EKG_TON pushed")
@@ -583,8 +584,7 @@ class Ui_MainWindow(object):
         else:
             self.puls_ton = True
             # starten des workers
-            thread_ekg_ton = Thread(target=self.ekg_ton_work)
-            thread_ekg_ton.start()
+            self.threadpool.start(Worker(fn=self.ekg_ton_work))
             # Frabe zu Grün
             self.BTN_EKG_TON.setStyleSheet("background-color: green")
 
