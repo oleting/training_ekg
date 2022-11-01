@@ -9,6 +9,7 @@ import yaml
 
 use('Qt5Agg')
 
+
 class MplCanvas(FigureCanvas):
     def __init__(self, parent=None, width=5, height=4, dpi=100) -> None:
         fig = Figure(figsize=(width, height), dpi=dpi)
